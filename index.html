@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Course Registration · Linked List</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fffaf5;--card:#ffffff;--ink:#3d3556;--soft:#7a7194;--line:#eee6f5;--shadow:#e6dcf0;--field:#faf6ff;--mix:60%;--term:#f4f0ff;--termink:#3d3556;
+--c0:#ffb3ba;--c1:#ffd6a5;--c2:#fdf2a0;--c3:#b9f0c6;--c4:#b5dcff;--c5:#d9bdfc;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1b1730;--card:#272142;--ink:#f3eeff;--soft:#b8afd6;--line:#3b3360;--shadow:#120f22;--field:#1f1a38;--mix:32%;--term:#16122a;--termink:#e9e3ff}}
+:root[data-theme="dark"]{--bg:#1b1730;--card:#272142;--ink:#f3eeff;--soft:#b8afd6;--line:#3b3360;--shadow:#120f22;--field:#1f1a38;--mix:32%;--term:#16122a;--termink:#e9e3ff}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:'Nunito',system-ui,sans-serif;font-size:16px;line-height:1.5;transition:background .25s,color .25s}
+h1,h2,h3,.fred{font-family:'Fredoka','Nunito',system-ui,sans-serif;font-weight:600;margin:0}
+.wrap{max-width:1040px;margin:0 auto;padding:20px 16px 48px}
+.rainbow{height:10px;border-radius:10px;background:linear-gradient(90deg,var(--c0),var(--c1),var(--c2),var(--c3),var(--c4),var(--c5));margin-bottom:18px}
+header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin-bottom:20px}
+h1{font-size:clamp(26px,5vw,38px);line-height:1.1}
+.sub{color:var(--soft);margin:4px 0 0;font-size:15px}
+.right{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.who{background:color-mix(in srgb,var(--c5) var(--mix),var(--card));border-radius:18px;padding:7px 14px;font-size:14px}
+.who b{font-family:'Fredoka',sans-serif;font-weight:500}
+.seg{display:inline-flex;background:var(--card);border-radius:20px;padding:4px;box-shadow:0 3px 0 var(--shadow)}
+.seg button{border:0;background:transparent;color:var(--soft);font:500 14px 'Fredoka',sans-serif;border-radius:16px;padding:6px 12px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--c2);color:#3d3556}
+.seg button:focus-visible,button:focus-visible{outline:3px solid var(--c5);outline-offset:2px}
+.grid{display:grid;grid-template-columns:300px 1fr;gap:16px}
+@media(max-width:760px){.grid{grid-template-columns:1fr}}
+.card{background:var(--card);border-radius:26px;padding:18px;box-shadow:0 5px 0 var(--shadow)}
+.card h2{font-size:20px;margin-bottom:10px}
+.stack>.card+.card{margin-top:16px}
+label{display:block;font-size:14px;font-weight:700;margin:10px 0 4px;color:var(--soft)}
+input{width:100%;border:2px solid var(--line);background:var(--field);color:var(--ink);border-radius:14px;padding:10px 12px;font:inherit;outline:none}
+input:focus-visible{border-color:var(--c4);box-shadow:0 0 0 3px color-mix(in srgb,var(--c4) 50%,transparent)}
+button.act{width:100%;margin-top:14px;border:0;border-radius:16px;padding:11px;font:600 16px 'Fredoka',sans-serif;cursor:pointer;color:#3d3556;transition:transform .1s}
+button.act:active{transform:translateY(2px)}
+.add{background:var(--c3);box-shadow:0 4px 0 #8fd6a2}
+.drop{background:var(--c0);box-shadow:0 4px 0 #ee8f99}
+.stats{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.pill{border-radius:18px;padding:8px 14px;font-weight:700;color:#3d3556}
+.pill b{font:600 22px 'Fredoka',sans-serif;margin-right:4px}
+.p1{background:var(--c2)}.p2{background:var(--c4)}.p3{background:var(--c1)}
+.chain{display:flex;align-items:center;flex-wrap:wrap;gap:8px 0;min-height:120px;padding:6px 0}
+.ptr span{display:inline-block;background:var(--c3);color:#2c4a40;border-radius:12px;padding:4px 10px;font:600 14px 'Fredoka',sans-serif}
+.arrow{width:32px;height:20px;flex:none;color:var(--soft)}
+.node{position:relative;background:color-mix(in srgb,var(--c) var(--mix),var(--card));border:2px solid var(--c);border-radius:20px;padding:10px 12px;min-width:150px;max-width:190px;animation:pop .35s cubic-bezier(.3,1.6,.5,1)}
+.node .code{font:600 16px 'Fredoka',sans-serif}
+.node .nm{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.node .row{display:flex;justify-content:space-between;align-items:center;margin-top:6px;font-size:12px;color:var(--soft)}
+.cr{background:var(--card);border-radius:10px;padding:1px 9px;font-weight:700;color:var(--ink);font-size:13px}
+.x{position:absolute;top:-9px;right:-9px;width:26px;height:26px;border-radius:50%;border:0;background:var(--card);color:var(--ink);cursor:pointer;box-shadow:0 2px 0 var(--shadow);font-size:13px;line-height:1}
+.node.bye{animation:bye .3s forwards}
+.null{background:var(--card);border:2px dashed var(--line);border-radius:14px;padding:6px 12px;font:500 14px 'Fredoka',sans-serif;color:var(--soft)}
+.empty{width:100%;text-align:center;color:var(--soft);padding:10px}
+.empty .big{font-size:40px}
+@keyframes pop{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes bye{to{transform:scale(.5) rotate(-6deg);opacity:0}}
+@media(prefers-reduced-motion:reduce){.node,.node.bye{animation:none}}
+.out{margin-top:16px}
+.out-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:16px}
+@media(max-width:760px){.out-grid{grid-template-columns:1fr}}
+.out h3{font-size:17px;margin-bottom:8px}
+.tbl{overflow-x:auto;border-radius:18px;border:2px solid var(--line)}
+table{width:100%;border-collapse:collapse;font-size:15px;min-width:340px}
+th{font:500 14px 'Fredoka',sans-serif;text-align:left;padding:9px 12px;background:linear-gradient(90deg,color-mix(in srgb,var(--c0) var(--mix),var(--card)),color-mix(in srgb,var(--c2) var(--mix),var(--card)),color-mix(in srgb,var(--c4) var(--mix),var(--card)),color-mix(in srgb,var(--c5) var(--mix),var(--card)))}
+td{padding:9px 12px;border-top:1px solid var(--line)}
+td.n,th.n{text-align:right;width:84px}
+.dot{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:8px;background:var(--c)}
+tfoot td{font-weight:700;background:color-mix(in srgb,var(--c3) var(--mix),var(--card))}
+.none{text-align:center;color:var(--soft);padding:18px}
+.term{background:var(--term);color:var(--termink);border-radius:18px;padding:12px 14px;font:13px/1.6 ui-monospace,Menlo,Consolas,monospace;height:100%;min-height:150px;max-height:230px;overflow:auto}
+.term .ok{color:#2e9e62}.term .err{color:#d9546a}
+:root[data-theme="dark"] .term .ok{color:#8ee6b4}:root[data-theme="dark"] .term .err{color:#ff9aa9}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .term .ok{color:#8ee6b4}:root:not([data-theme="light"]) .term .err{color:#ff9aa9}}
+.info{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:16px}
+.info .card{padding:14px 16px}
+.info h3{font-size:17px;margin-bottom:4px}
+.info p{margin:0;color:var(--soft);font-size:14px}
+code{background:color-mix(in srgb,var(--c5) var(--mix),var(--card));border-radius:8px;padding:1px 6px;font-size:13px}
+footer{margin-top:22px;text-align:center;color:var(--soft);font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="rainbow"></div>
+<header>
+  <div>
+    <h1>🌈 Course Registration</h1>
+    <p class="sub">A singly linked list you can watch grow and shrink. No array limits!</p>
+  </div>
+  <div class="right">
+    <div class="who"><b>Thaejashri Karthika C.</b><br>RA2511003020125 · CSE-C</div>
+    <div class="seg" role="group" aria-label="Color mode">
+      <button id="bLight" aria-pressed="false">☀️ Light</button>
+      <button id="bDark" aria-pressed="false">🌙 Dark</button>
+    </div>
+  </div>
+</header>
+
+<div class="grid">
+  <div class="stack">
+    <div class="card">
+      <h2>Add a course</h2>
+      <label for="code">Course code</label>
+      <input id="code" maxlength="14" placeholder="21CSC201J" autocomplete="off">
+      <label for="name">Course name</label>
+      <input id="name" maxlength="59" placeholder="Data Structures and Algorithm" autocomplete="off">
+      <label for="cr">Credits</label>
+      <input id="cr" type="number" min="1" max="10" placeholder="4">
+      <button class="act add" id="addBtn">Register course</button>
+    </div>
+    <div class="card">
+      <h2>Drop a course</h2>
+      <label for="dcode">Course code</label>
+      <input id="dcode" maxlength="14" placeholder="21CSC201J" autocomplete="off">
+      <button class="act drop" id="dropBtn">Drop course</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Linked list view</h2>
+    <div class="stats">
+      <div class="pill p1"><b id="tc">0</b>total credits</div>
+      <div class="pill p2"><b id="cc">0</b>courses</div>
+      <div class="pill p3"><b id="st">0</b>nodes visited last</div>
+    </div>
+    <div class="chain" id="chain"></div>
+  </div>
+</div>
+
+<div class="card out">
+  <h2>Output</h2>
+  <div class="out-grid">
+    <div>
+      <h3>Current registered courses</h3>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Code</th><th>Course name</th><th class="n">Credits</th></tr></thead>
+          <tbody id="tbody"></tbody>
+          <tfoot><tr><td colspan="2">Total registered credits</td><td class="n" id="tfoot">0</td></tr></tfoot>
+        </table>
+      </div>
+    </div>
+    <div>
+      <h3>Console messages</h3>
+      <div class="term" id="term" aria-live="polite"></div>
+    </div>
+  </div>
+</div>
+
+<div class="info">
+  <div class="card"><h3>How adding works</h3><p>A new node is made with <code>malloc</code>. If the list is empty, <code>head</code> points to it. Otherwise the program walks to the tail and links it there.</p></div>
+  <div class="card"><h3>How dropping works</h3><p>The program finds the matching code, links the previous node past it (or moves <code>head</code> forward), then calls <code>free</code>.</p></div>
+  <div class="card"><h3>Speed and space</h3><p>Search and tail-append take O(N). Extra space is O(1) beyond the nodes. Adding a tail pointer would make inserts O(1).</p></div>
+</div>
+<footer>21CSC201J Data Structures and Algorithm · Guided by Dr. P. Sabitha · SRM Institute of Science and Technology, Ramapuram</footer>
+</div>
+
+<script>
+var head = null, count = 0;
+function $(i){return document.getElementById(i)}
+function addr(){return '0x' + (0x5580 + Math.floor(Math.random()*0xfff)).toString(16) + Math.floor(Math.random()*0xfff).toString(16).padStart(3,'0')}
+function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML}
+function log(msg, cls){
+  var t = $('term'), d = document.createElement('div');
+  d.className = cls || ''; d.textContent = '> ' + msg;
+  t.appendChild(d); t.scrollTop = t.scrollHeight;
+}
+
+function addCourse(){
+  var code = $('code').value.trim(), name = $('name').value.trim(), cr = parseInt($('cr').value, 10);
+  if(!code || !name || isNaN(cr)){ log('Fill in the code, name and credits to register.', 'err'); return; }
+  if(cr < 1 || cr > 10){ log('Credits must be between 1 and 10.', 'err'); return; }
+  var steps = 0, t = head;
+  while(t){ steps++; if(t.courseCode.toLowerCase() === code.toLowerCase()){ $('st').textContent = steps; log("Course '" + t.courseCode + "' is already registered.", 'err'); return; } t = t.next; }
+  var node = {courseCode: code, courseName: name, credits: cr, next: null, addr: addr()};
+  if(head === null){ head = node; }
+  else { var p = head; while(p.next !== null){ p = p.next; } p.next = node; }
+  count++;
+  $('st').textContent = steps;
+  log("Course '" + code + "' registered successfully!", 'ok');
+  $('code').value = $('name').value = $('cr').value = '';
+  render();
+  $('code').focus();
+}
+
+function dropByCode(code){
+  code = (code || '').trim();
+  if(head === null){ log('No courses registered to drop.', 'err'); return; }
+  if(!code){ log('Enter the course code to drop.', 'err'); return; }
+  var temp = head, prev = null, steps = 1;
+  if(temp.courseCode === code){ head = temp.next; count--; finish(code, steps); return; }
+  while(temp !== null && temp.courseCode !== code){ prev = temp; temp = temp.next; steps++; }
+  if(temp === null){ $('st').textContent = steps - 1; log("Course code '" + code + "' not found in registration records.", 'err'); return; }
+  prev.next = temp.next; count--; finish(code, steps);
+}
+function finish(code, steps){
+  $('st').textContent = steps;
+  log("Course '" + code + "' dropped successfully.", 'ok');
+  $('dcode').value = '';
+  var el = document.querySelector('[data-code="' + CSS.escape(code) + '"]');
+  if(el){ el.classList.add('bye'); setTimeout(render, 280); } else render();
+}
+
+function arrow(){return '<svg class="arrow" viewBox="0 0 34 20" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10h26M22 3l7 7-7 7"/></svg>'}
+function render(){
+  var c = $('chain'), tb = $('tbody'), tot = 0, i = 0, t = head, h = '', rows = '';
+  if(head === null){
+    c.innerHTML = '<div class="empty"><div class="big">🌸</div>Your list is empty (head → NULL).<br>Register your first course to create a node.</div>';
+    tb.innerHTML = '<tr><td colspan="3" class="none">Your registration list is empty.</td></tr>';
+  } else {
+    h = '<div class="ptr"><span>head</span></div>' + arrow();
+    while(t){
+      var col = 'style="--c:var(--c' + (i % 6) + ')"';
+      tot += t.credits;
+      h += '<div class="node" ' + col + ' data-code="' + esc(t.courseCode) + '">' +
+        '<button class="x" aria-label="Drop ' + esc(t.courseCode) + '" data-drop="' + esc(t.courseCode) + '">✕</button>' +
+        '<div class="code">' + esc(t.courseCode) + '</div><div class="nm" title="' + esc(t.courseName) + '">' + esc(t.courseName) + '</div>' +
+        '<div class="row"><span class="cr">' + t.credits + ' cr</span><span>' + t.addr + '</span></div></div>' + arrow();
+      rows += '<tr><td><span class="dot" ' + col + '></span>' + esc(t.courseCode) + '</td><td>' + esc(t.courseName) + '</td><td class="n">' + t.credits + '</td></tr>';
+      t = t.next; i++;
+    }
+    c.innerHTML = h + '<div class="null">NULL</div>';
+    tb.innerHTML = rows;
+  }
+  $('tc').textContent = tot; $('cc').textContent = count; $('tfoot').textContent = tot;
+}
+
+function setTheme(m){
+  document.documentElement.setAttribute('data-theme', m);
+  $('bLight').setAttribute('aria-pressed', m === 'light');
+  $('bDark').setAttribute('aria-pressed', m === 'dark');
+}
+$('bLight').onclick = function(){ setTheme('light'); };
+$('bDark').onclick = function(){ setTheme('dark'); };
+setTheme(matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+
+$('addBtn').onclick = addCourse;
+$('dropBtn').onclick = function(){ dropByCode($('dcode').value); };
+$('chain').addEventListener('click', function(e){ var b = e.target.closest('[data-drop]'); if(b) dropByCode(b.getAttribute('data-drop')); });
+['code','name','cr'].forEach(function(i){ $(i).addEventListener('keydown', function(e){ if(e.key === 'Enter') addCourse(); }); });
+$('dcode').addEventListener('keydown', function(e){ if(e.key === 'Enter') dropByCode($('dcode').value); });
+log('=== STUDENT COURSE REGISTRATION SYSTEM ===');
+log('Ready. head = NULL');
+render();
+</script>
+</body>
+</html>
